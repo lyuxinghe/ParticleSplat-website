@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="ParticleSplat: Self-supervised Object-centric Latent Particle Splatting. Learning 3D object-centric representations from posed images for robotic manipulation.">
+  <meta name="theme-color" content="#ffffff">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="ParticleSplat: Self-supervised Object-centric Latent Particle Splatting">
+  <meta property="og:description" content="A self-supervised 3D particle representation learned through feedforward Gaussian splatting, evaluated on RLBench and MimicGen.">
+  <meta name="citation_title" content="ParticleSplat: Self-supervised Object-centric Latent Particle Splatting">
+  <!-- Add confirmed authors, affiliations, publication metadata, and paper URL before publication.
+       The supplied manuscript still contains template author names. -->
+  <title>ParticleSplat: Self-supervised Object-centric Latent Particle Splatting</title>
+  <link rel="icon" href="static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=results-17">
+  <script src="static/js/comparison.js?v=results-15" defer></script>
+  <link rel="stylesheet" href="static/css/particle-demo.css?v=4">
+  <script type="importmap">
+    {"imports":{"three":"./static/vendor/three/three.module.min.js","three/addons/":"./static/vendor/three/addons/","@sparkjsdev/spark":"./static/vendor/spark/spark.module.js"}}
+  </script>
+  <script src="static/js/particle-demo-loader.js?v=8" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="publication-header" id="top">
+    <div class="container">
+      <h1>
+        <span class="project-name">Particle<span>Splat</span></span>
+        <span class="paper-title">Self-supervised Object-centric<br class="desktop-break"> Latent Particle Splatting</span>
+      </h1>
+      <!-- The author and affiliation rows belong here once their values are confirmed. -->
+      <p class="publication-summary">Learning compact 3D object-centric representations<br class="desktop-break"> through feedforward Gaussian splatting.</p>
+      <div class="publication-links" aria-label="Project resources">
+        <a class="resource-link primary" href="https://github.com/lyuxinghe/ParticleSplat" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5 2 12l6 7m8-14 6 7-6 7M14 3l-4 18"/></svg>
+          Code
+        </a>
+      </div>
+      <nav class="section-nav" aria-label="On this page">
+        <a href="#abstract">Abstract</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#decomposition">Scene decomposition</a>
+        <a href="#manipulation">Interactive demo</a>
+        <a href="#results">Results</a>
+        <a href="#reconstruction">3D reconstruction</a>
+        <a href="#policy-results">Policy learning</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="abstract-section" id="abstract" aria-labelledby="abstract-title">
+      <div class="reading-column">
+        <h2 id="abstract-title">Abstract</h2>
+        <p>
+          We present <strong>ParticleSplat</strong>, a self-supervised object-centric representation learning method that decomposes scenes into latent particles through feedforward 3D Gaussian Splatting. Building on Deep Latent Particles (DLP), we extend the particle representation beyond 2D image space to capture the geometric structure needed for robotic manipulation.
+          Our model jointly encodes posed observations into a 3D object-centric latent space, then transforms each particle into an aligned field of 3D Gaussians whose composition reconstructs the scene.
+        </p>
+        <p>
+          Training with a novel view synthesis objective yields object masks without supervision and supports controllable scene editing through particle attributes. Evaluations on simulated and real-world data demonstrate the representation’s reconstruction and decomposition capabilities. On downstream imitation learning, ParticleSplat improves policy success on both RLBench and MimicGen, showing the value of combining object-centric structure with explicit 3D information.
+        </p>
+      </div>
+    </section>
+
+    <section class="content-section" id="architecture" aria-labelledby="architecture-title">
+      <div class="container">
+        <header class="section-heading">
+          <h2 id="architecture-title">Architecture</h2>
+          <p>From posed observations to object-centric particles and compositional 3D Gaussians.</p>
+        </header>
+        <figure class="architecture-figure">
+          <img src="static/images/architecture.png" width="4946" height="2418"
+            alt="ParticleSplat architecture: multi-view RGB images, camera poses, and optional depth maps enter a multi-view particle encoder. The latent particles have keypoints and bounding boxes. A particle decoder produces 3D Gaussian primitives, which a novel-view camera renders as segmentation, foreground, background, RGB, and depth."
+            decoding="async">
+          <figcaption>
+            <strong>ParticleSplat overview.</strong> The view-aware encoder infers latent particles from RGB images, camera poses encoded as Plücker rays, and optional depth maps. Each particle is decoded into a local Gaussian field, lifted to world coordinates, and composed with the background for differentiable rendering. Keypoints (KP), bounding boxes (BB), and segmentation masks (SEG) follow from the particle structure.
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section class="content-section decomposition-section" id="decomposition" aria-labelledby="decomposition-title">
+      <div class="container">
+        <header class="section-heading">
+          <h2 id="decomposition-title">Scene decomposition</h2>
+        </header>
+        <p class="media-reading-note">In the clips, <strong>Ctx</strong> denotes a context input and <strong>GT</strong> the reference target view. Use the play controls to explore each silent video.</p>
+        <article class="scene-example" id="decomposition-rlbench" aria-labelledby="decomposition-rlbench-title">
+          <header class="scene-heading">
+            <h3 id="decomposition-rlbench-title">RLBench · single-view</h3>
+            <p>A front-camera RGB-D observation conditions a sweep of novel viewpoints. The clips show reconstruction and particle decomposition of the same scene.</p>
+          </header>
+          <div class="scene-panels">
+            <div class="scene-panel-group reconstruction-panels" role="group" aria-labelledby="rlbench-reconstruction-title">
+              <p class="panel-group-label" id="rlbench-reconstruction-title">Novel-view reconstruction</p>
+              <div class="reconstruction-grid">
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/rlbench/rgb.jpg" width="384" height="128" aria-label="RLBench — Novel-view RGB reconstruction (silent video)">
+                    <source src="static/videos/decomposition/rlbench/rgb.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/rlbench/rgb.mp4">Download RLBench — Novel-view RGB reconstruction (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">RGB reconstruction</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/rlbench/rgb.mp4" download aria-label="Download RLBench RGB reconstruction video">MP4</a></span>
+                  </figcaption>
+                </figure>
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/rlbench/depth.jpg" width="384" height="128" aria-label="RLBench — Depth reconstruction (silent video)">
+                    <source src="static/videos/decomposition/rlbench/depth.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/rlbench/depth.mp4">Download RLBench — Depth reconstruction (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">Depth reconstruction</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/rlbench/depth.mp4" download aria-label="Download RLBench Depth reconstruction video">MP4</a></span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="scene-panel-group" role="group" aria-labelledby="rlbench-components-title">
+              <p class="panel-group-label" id="rlbench-components-title">Object decomposition</p>
+              <div class="component-grid">
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/rlbench/segmentation.jpg" width="128" height="128" aria-label="RLBench — Object-centric segmentation (silent video)">
+                    <source src="static/videos/decomposition/rlbench/segmentation.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/rlbench/segmentation.mp4">Download RLBench — Object-centric segmentation (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">Segmentation</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/rlbench/segmentation.mp4" download aria-label="Download RLBench Segmentation video">MP4</a></span>
+                  </figcaption>
+                </figure>
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/rlbench/foreground.jpg" width="128" height="128" aria-label="RLBench — Foreground rendering (silent video)">
+                    <source src="static/videos/decomposition/rlbench/foreground.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/rlbench/foreground.mp4">Download RLBench — Foreground rendering (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">Foreground</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/rlbench/foreground.mp4" download aria-label="Download RLBench Foreground video">MP4</a></span>
+                  </figcaption>
+                </figure>
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/rlbench/background.jpg" width="128" height="128" aria-label="RLBench — Background rendering (silent video)">
+                    <source src="static/videos/decomposition/rlbench/background.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/rlbench/background.mp4">Download RLBench — Background rendering (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">Background</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/rlbench/background.mp4" download aria-label="Download RLBench Background video">MP4</a></span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="scene-panel-group" role="group" aria-labelledby="rlbench-geometry-title">
+              <p class="panel-group-label" id="rlbench-geometry-title">Particle geometry</p>
+              <div class="component-grid">
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/rlbench/keypoints-3d.jpg" width="128" height="128" aria-label="RLBench — 3D keypoints (silent video)">
+                    <source src="static/videos/decomposition/rlbench/keypoints-3d.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/rlbench/keypoints-3d.mp4">Download RLBench — 3D keypoints (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">3D keypoints</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/rlbench/keypoints-3d.mp4" download aria-label="Download RLBench 3D keypoints video">MP4</a></span>
+                  </figcaption>
+                </figure>
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/rlbench/bbox-2d.jpg" width="128" height="128" aria-label="RLBench — 2D bounding boxes (silent video)">
+                    <source src="static/videos/decomposition/rlbench/bbox-2d.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/rlbench/bbox-2d.mp4">Download RLBench — 2D bounding boxes (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">2D boxes</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/rlbench/bbox-2d.mp4" download aria-label="Download RLBench 2D boxes video">MP4</a></span>
+                  </figcaption>
+                </figure>
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/rlbench/bbox-3d.jpg" width="128" height="128" aria-label="RLBench — 3D bounding boxes (silent video)">
+                    <source src="static/videos/decomposition/rlbench/bbox-3d.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/rlbench/bbox-3d.mp4">Download RLBench — 3D bounding boxes (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">3D boxes</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/rlbench/bbox-3d.mp4" download aria-label="Download RLBench 3D boxes video">MP4</a></span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+          <p class="media-footnote">15.5 s per clip · Same scene and camera sweep across all eight views.</p>
+        </article>
+
+        <article class="scene-example" id="decomposition-real-world" aria-labelledby="decomposition-real-world-title">
+          <header class="scene-heading">
+            <h3 id="decomposition-real-world-title">Real-world · multi-view</h3>
+            <p>Two RGB context views from a handheld camera, without depth input. These clips show scene reconstruction and decomposition, not real-world policy execution.</p>
+          </header>
+          <div class="scene-panels">
+            <div class="scene-panel-group reconstruction-panels" role="group" aria-labelledby="real-world-reconstruction-title">
+              <p class="panel-group-label" id="real-world-reconstruction-title">Novel-view reconstruction</p>
+              <div class="reconstruction-grid">
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/real-world/rgb.jpg" width="384" height="256" aria-label="Real-world — Novel-view RGB reconstruction (silent video)">
+                    <source src="static/videos/decomposition/real-world/rgb.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/real-world/rgb.mp4">Download Real-world — Novel-view RGB reconstruction (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">RGB reconstruction</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/real-world/rgb.mp4" download aria-label="Download real-world RGB reconstruction video">MP4</a></span>
+                  </figcaption>
+                </figure>
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/real-world/depth.jpg" width="384" height="256" aria-label="Real-world — Depth reconstruction (silent video)">
+                    <source src="static/videos/decomposition/real-world/depth.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/real-world/depth.mp4">Download Real-world — Depth reconstruction (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">Depth reconstruction</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/real-world/depth.mp4" download aria-label="Download real-world Depth reconstruction video">MP4</a></span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="scene-panel-group" role="group" aria-labelledby="real-world-components-title">
+              <p class="panel-group-label" id="real-world-components-title">Object decomposition</p>
+              <div class="component-grid">
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/real-world/segmentation.jpg" width="128" height="128" aria-label="Real-world — Object-centric segmentation (silent video)">
+                    <source src="static/videos/decomposition/real-world/segmentation.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/real-world/segmentation.mp4">Download Real-world — Object-centric segmentation (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">Segmentation</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/real-world/segmentation.mp4" download aria-label="Download real-world Segmentation video">MP4</a></span>
+                  </figcaption>
+                </figure>
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/real-world/foreground.jpg" width="128" height="128" aria-label="Real-world — Foreground rendering (silent video)">
+                    <source src="static/videos/decomposition/real-world/foreground.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/real-world/foreground.mp4">Download Real-world — Foreground rendering (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">Foreground</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/real-world/foreground.mp4" download aria-label="Download real-world Foreground video">MP4</a></span>
+                  </figcaption>
+                </figure>
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/real-world/background.jpg" width="128" height="128" aria-label="Real-world — Background rendering (silent video)">
+                    <source src="static/videos/decomposition/real-world/background.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/real-world/background.mp4">Download Real-world — Background rendering (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">Background</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/real-world/background.mp4" download aria-label="Download real-world Background video">MP4</a></span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="scene-panel-group" role="group" aria-labelledby="real-world-geometry-title">
+              <p class="panel-group-label" id="real-world-geometry-title">Particle geometry</p>
+              <div class="component-grid">
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/real-world/keypoints-3d.jpg" width="128" height="128" aria-label="Real-world — 3D keypoints (silent video)">
+                    <source src="static/videos/decomposition/real-world/keypoints-3d.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/real-world/keypoints-3d.mp4">Download Real-world — 3D keypoints (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">3D keypoints</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/real-world/keypoints-3d.mp4" download aria-label="Download real-world 3D keypoints video">MP4</a></span>
+                  </figcaption>
+                </figure>
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/real-world/bbox-2d.jpg" width="128" height="128" aria-label="Real-world — 2D bounding boxes (silent video)">
+                    <source src="static/videos/decomposition/real-world/bbox-2d.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/real-world/bbox-2d.mp4">Download Real-world — 2D bounding boxes (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">2D boxes</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/real-world/bbox-2d.mp4" download aria-label="Download real-world 2D boxes video">MP4</a></span>
+                  </figcaption>
+                </figure>
+                <figure class="video-card">
+                  <video controls muted playsinline preload="none" poster="static/videos/decomposition/real-world/bbox-3d.jpg" width="128" height="128" aria-label="Real-world — 3D bounding boxes (silent video)">
+                    <source src="static/videos/decomposition/real-world/bbox-3d.mp4" type="video/mp4">
+                    <a href="static/videos/decomposition/real-world/bbox-3d.mp4">Download Real-world — 3D bounding boxes (MP4)</a>
+                  </video>
+                  <figcaption>
+                    <span class="video-label">3D boxes</span>
+                    <span class="media-meta"><a href="static/videos/decomposition/real-world/bbox-3d.mp4" download aria-label="Download real-world 3D boxes video">MP4</a></span>
+                  </figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+          <p class="media-footnote">42.8 s per clip · Same scene and camera sweep across all eight views. Overlapping particles are filtered with non-maximum suppression for visual clarity, as described in the supplement.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-section" id="manipulation" aria-labelledby="manipulation-title">
+      <div class="container">
+        <header class="section-heading">
+          <h2 id="manipulation-title">A scene you can edit</h2>
+          <p>Pick a point. Make the scene your own.</p>
+        </header>
+        <div class="particle-demo" data-state="idle">
+          <div class="demo-topline">
+            <div><strong>RLBench <span aria-hidden="true">/</span> Close Jar</strong><span class="demo-tag">Interactive 3D</span></div>
+            <span class="demo-engine">Particle-aligned Gaussian splats</span>
+          </div>
+          <div class="demo-workspace">
+            <div class="demo-viewport" id="particle-viewport" aria-label="Interactive reconstructed scene" aria-describedby="demo-instructions">
+              <img class="demo-poster" src="static/scenes/close-jar/poster.png?v=8" width="128" height="128" loading="lazy" alt="Interactive scene preview: two jars and a separate lid beneath a robot arm.">
+              <div class="demo-start">
+                <p>A little room to experiment.</p>
+                <button type="button" id="demo-load" hidden>Explore in 3D <span aria-hidden="true">↗</span></button>
+                <span class="demo-load-note">Loads ~10 MB once. Everything runs in your browser.</span>
+                <noscript><p>Enable JavaScript and WebGL2 to manipulate the scene. A static preview is shown above.</p></noscript>
+              </div>
+              <div class="demo-canvas-caption" hidden><span class="demo-live-dot" aria-hidden="true"></span> Live reconstruction</div>
+              <div class="demo-handles" id="demo-handles" role="group" aria-label="Editable scene regions"></div>
+              <div class="demo-axis-labels" id="demo-axis-labels" aria-hidden="true" hidden><span data-axis="x">X</span><span data-axis="y">Y</span><span data-axis="z">Z</span></div>
+            </div>
+            <div class="demo-view-tools" hidden>
+              <button type="button" id="demo-camera" title="Restore the original camera">Reset view</button>
+              <button type="button" id="demo-reset-all">Reset scene</button>
+              <button type="button" id="demo-show-handles" aria-pressed="true">Handles</button>
+            </div>
+            <form class="demo-controls" id="demo-editor" aria-labelledby="demo-editor-title" hidden onsubmit="return false">
+              <div class="demo-editor-heading"><h3 id="demo-editor-title">Edit selection</h3><button type="button" id="demo-close" aria-label="Close editing panel">×</button></div>
+              <fieldset id="demo-control-fields" disabled>
+                <legend class="demo-sr-only">Position and size</legend>
+                <div class="demo-transform-modes" role="group" aria-label="3D axis controls">
+                  <button type="button" id="demo-move-mode" aria-pressed="true">Move</button>
+                  <button type="button" id="demo-scale-mode" aria-pressed="false">Scale</button>
+                </div>
+                <p class="demo-axis-hint" id="demo-axis-hint">Drag an arrow to move along X, Y or Z.</p>
+                <div class="demo-slider-heading"><span id="demo-axis-heading">Position offset</span><span id="demo-axis-unit">cm</span></div>
+                <div class="demo-position">
+                  <label data-axis="x">X<input type="number" id="demo-x" min="-25" max="25" step="0.1" value="0" aria-label="X offset in centimeters"></label>
+                  <label data-axis="y">Y<input type="number" id="demo-y" min="-25" max="25" step="0.1" value="0" aria-label="Y offset in centimeters"></label>
+                  <label data-axis="z">Z<input type="number" id="demo-z" min="-25" max="25" step="0.1" value="0" aria-label="Z offset in centimeters"></label>
+                </div>
+                <div class="demo-slider-heading"><label for="demo-scale">Uniform scale</label><output id="demo-scale-value" for="demo-scale">1.00×</output></div>
+                <input id="demo-scale" type="range" min="0.5" max="2" step="0.01" value="1" aria-label="Uniform scale of selection">
+                <div class="demo-toggle-row"><button type="button" id="demo-focus">Focus here</button></div>
+                <div class="demo-reset-row"><button type="button" id="demo-reset-selected">Reset selection</button><span>Esc to close</span></div>
+              </fieldset>
+            </form>
+          </div>
+          <div class="demo-bottomline" id="demo-instructions">
+            <span><strong>Click a ball</strong> to edit · <strong>Drag it</strong> to move</span>
+            <span>Drag background to orbit · Right-drag to pan · Scroll / pinch to zoom</span>
+          </div>
+          <p class="demo-status" id="demo-status" role="status" aria-live="polite">Ready to explore.</p>
+        </div>
+        <p class="demo-method-note">Translucent markers select editable regions. Move and scale the reconstruction, then explore a camera range extending slightly beyond the two input views. Rotation and tilt are limited because unseen surfaces may be incomplete; edits do not simulate robot kinematics or physics.</p>
+        <p class="demo-provenance">An interactive illustration based on a held-out RLBench scene and a two-view, 50k-step checkpoint. The initial camera is an unseen intermediate view; native model resolution is 128 × 128. This prepared demo is separate from the benchmark results below.</p>
+      </div>
+    </section>
+
+    <section class="content-section results-section" id="results" aria-labelledby="results-title">
+      <div class="container">
+        <header class="section-heading">
+          <h2 id="results-title">Results</h2>
+          <p>Evaluating the representation through 3D reconstruction and downstream policy learning.</p>
+        </header>
+        <nav class="results-nav" aria-label="Results sections">
+          <a href="#reconstruction">3D reconstruction</a>
+          <a href="#policy-results">Policy learning</a>
+        </nav>
+
+        <section class="result-domain" id="reconstruction" aria-labelledby="reconstruction-title">
+          <header class="domain-heading">
+            <h3 id="reconstruction-title">3D reconstruction</h3>
+            <p>Novel-view synthesis in simulation and real scenes.</p>
+          </header>
+          <section class="result-block" id="reconstruction-quantitative" aria-labelledby="reconstruction-quantitative-title">
+            <h4 id="reconstruction-quantitative-title">Quantitative results</h4>
+            <p class="result-intro">Novel-view synthesis at 128 × 128, averaged over evaluation views and scenes. Higher PSNR and SSIM are better; lower LPIPS is better.</p>
+            <div class="table-scroll reconstruction-table-scroll" role="region" aria-label="Reconstruction metrics by dataset and input setting" tabindex="0">
+              <table class="reconstruction-table">
+                <caption>Reported reconstruction metrics from the paper.</caption>
+                <thead><tr><th scope="col">Method</th><th scope="col">PSNR <span>(dB)</span></th><th scope="col">SSIM</th><th scope="col">LPIPS</th></tr></thead>
+
+                <tbody data-setting="1 x RGB-D" data-dataset="RLBench">
+                  <tr class="metric-setting"><th colspan="4" scope="rowgroup">RLBench · single-view<span>One front RGB-D context view</span></th></tr>
+                  <tr class="metric-row metric-ours" data-method="ParticleSplat"><th scope="row">ParticleSplat <span class="method-difference">(ours)</span></th><td>25.35</td><td>0.7293</td><td>0.3563</td></tr>
+                  <tr class="metric-row" data-method="VAE-GS"><th scope="row">VAE-GS <span class="method-difference">(no object-centric structure)</span></th><td>21.85</td><td>0.6858</td><td>0.4838</td></tr>
+                  <tr class="metric-row metric-baseline" data-method="GNFactor"><th scope="row">GNFactor</th><td>16.20</td><td>0.5273</td><td>0.6819</td></tr>
+                  <tr class="metric-row" data-method="ManiGaussian"><th scope="row">ManiGaussian</th><td>15.87</td><td>0.5154</td><td>0.6793</td></tr>
+                </tbody>
+
+                <tbody data-setting="2 x RGB-D" data-dataset="RLBench">
+                  <tr class="metric-setting"><th colspan="4" scope="rowgroup">RLBench · multi-view<span>Two RGB-D context views</span></th></tr>
+                  <tr class="metric-row metric-ours" data-method="ParticleSplat"><th scope="row">ParticleSplat <span class="method-difference">(ours)</span></th><td>28.77</td><td>0.8144</td><td>0.2565</td></tr>
+                  <tr class="metric-row" data-method="VAE-GS"><th scope="row">VAE-GS <span class="method-difference">(no object-centric structure)</span></th><td>25.93</td><td>0.7326</td><td>0.3404</td></tr>
+                </tbody>
+
+                <tbody data-setting="2 x RGB" data-dataset="Real-world">
+                  <tr class="metric-setting"><th colspan="4" scope="rowgroup">Real-world · multi-view<span>Two RGB context views; no depth input</span></th></tr>
+                  <tr class="metric-row metric-ours" data-method="ParticleSplat"><th scope="row">ParticleSplat <span class="method-difference">(ours)</span></th><td>24.24</td><td>0.8455</td><td>0.1153</td></tr>
+                  <tr class="metric-row" data-method="VAE-GS"><th scope="row">VAE-GS <span class="method-difference">(no object-centric structure)</span></th><td>20.33</td><td>0.4659</td><td>0.6587</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="table-note">PSNR: peak signal-to-noise ratio; SSIM: structural similarity; LPIPS: learned perceptual image patch similarity. RLBench uses four held-out target views; real-world evaluation uses every fourth view of the capture trajectory.</p>
+          </section>
+
+          <section class="result-block" id="reconstruction-qualitative" aria-labelledby="reconstruction-qualitative-title">
+            <h4 id="reconstruction-qualitative-title">Qualitative results</h4>
+            <p class="result-intro" id="comparison-instructions">Drag the divider to compare ground truth with ParticleSplat at the same novel camera view. You can also focus a slider and use the arrow keys.</p>
+            <noscript><p class="table-note">JavaScript is disabled: each pair is shown side by side with image labels.</p></noscript>
+            <div class="comparison-dataset">
+              <h5>RLBench · single-view RGB-D</h5>
+              <div class="comparison-gallery">
+                <figure class="comparison-card">
+                  <div class="image-comparison" style="--image-ratio: 175 / 175; --reveal: 50%">
+                    <div class="comparison-stage">
+                      <div class="comparison-layer comparison-reconstruction">
+                        <img src="static/images/reconstruction/rlbench-1-reconstruction.png" width="175" height="175" alt="ParticleSplat RGB reconstruction of RLBench scene 1 at the target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-reconstruction">ParticleSplat</span>
+                      </div>
+                      <div class="comparison-layer comparison-gt">
+                        <img src="static/images/reconstruction/rlbench-1-gt.png" width="175" height="175" alt="Ground-truth RGB image of RLBench scene 1 at the same target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-gt">Ground truth</span>
+                      </div>
+                      <span class="comparison-divider" aria-hidden="true"><span>‹ ›</span></span>
+                      <input class="comparison-range" type="range" min="0" max="100" value="50" step="1" aria-label="Compare ground truth and ParticleSplat for RLBench scene 1" aria-describedby="comparison-instructions" hidden>
+                    </div>
+                  </div>
+                  <figcaption><span>Scene 1</span></figcaption>
+                </figure>
+                <figure class="comparison-card">
+                  <div class="image-comparison" style="--image-ratio: 175 / 175; --reveal: 50%">
+                    <div class="comparison-stage">
+                      <div class="comparison-layer comparison-reconstruction">
+                        <img src="static/images/reconstruction/rlbench-2-reconstruction.png" width="175" height="175" alt="ParticleSplat RGB reconstruction of RLBench scene 2 at the target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-reconstruction">ParticleSplat</span>
+                      </div>
+                      <div class="comparison-layer comparison-gt">
+                        <img src="static/images/reconstruction/rlbench-2-gt.png" width="175" height="175" alt="Ground-truth RGB image of RLBench scene 2 at the same target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-gt">Ground truth</span>
+                      </div>
+                      <span class="comparison-divider" aria-hidden="true"><span>‹ ›</span></span>
+                      <input class="comparison-range" type="range" min="0" max="100" value="50" step="1" aria-label="Compare ground truth and ParticleSplat for RLBench scene 2" aria-describedby="comparison-instructions" hidden>
+                    </div>
+                  </div>
+                  <figcaption><span>Scene 2</span></figcaption>
+                </figure>
+                <figure class="comparison-card">
+                  <div class="image-comparison" style="--image-ratio: 175 / 176; --reveal: 50%">
+                    <div class="comparison-stage">
+                      <div class="comparison-layer comparison-reconstruction">
+                        <img src="static/images/reconstruction/rlbench-3-reconstruction.png" width="175" height="176" alt="ParticleSplat RGB reconstruction of RLBench scene 3 at the target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-reconstruction">ParticleSplat</span>
+                      </div>
+                      <div class="comparison-layer comparison-gt">
+                        <img src="static/images/reconstruction/rlbench-3-gt.png" width="175" height="176" alt="Ground-truth RGB image of RLBench scene 3 at the same target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-gt">Ground truth</span>
+                      </div>
+                      <span class="comparison-divider" aria-hidden="true"><span>‹ ›</span></span>
+                      <input class="comparison-range" type="range" min="0" max="100" value="50" step="1" aria-label="Compare ground truth and ParticleSplat for RLBench scene 3" aria-describedby="comparison-instructions" hidden>
+                    </div>
+                  </div>
+                  <figcaption><span>Scene 3</span></figcaption>
+                </figure>
+                <figure class="comparison-card">
+                  <div class="image-comparison" style="--image-ratio: 175 / 175; --reveal: 50%">
+                    <div class="comparison-stage">
+                      <div class="comparison-layer comparison-reconstruction">
+                        <img src="static/images/reconstruction/rlbench-4-reconstruction.png" width="175" height="175" alt="ParticleSplat RGB reconstruction of RLBench scene 4 at the target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-reconstruction">ParticleSplat</span>
+                      </div>
+                      <div class="comparison-layer comparison-gt">
+                        <img src="static/images/reconstruction/rlbench-4-gt.png" width="175" height="175" alt="Ground-truth RGB image of RLBench scene 4 at the same target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-gt">Ground truth</span>
+                      </div>
+                      <span class="comparison-divider" aria-hidden="true"><span>‹ ›</span></span>
+                      <input class="comparison-range" type="range" min="0" max="100" value="50" step="1" aria-label="Compare ground truth and ParticleSplat for RLBench scene 4" aria-describedby="comparison-instructions" hidden>
+                    </div>
+                  </div>
+                  <figcaption><span>Scene 4</span></figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="comparison-dataset">
+              <h5>Real-world · multi-view RGB</h5>
+              <div class="comparison-gallery">
+                <figure class="comparison-card">
+                  <div class="image-comparison" style="--image-ratio: 175 / 175; --reveal: 50%">
+                    <div class="comparison-stage">
+                      <div class="comparison-layer comparison-reconstruction">
+                        <img src="static/images/reconstruction/real-world-1-reconstruction.png" width="175" height="175" alt="ParticleSplat RGB reconstruction of Real-world scene 1 at the target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-reconstruction">ParticleSplat</span>
+                      </div>
+                      <div class="comparison-layer comparison-gt">
+                        <img src="static/images/reconstruction/real-world-1-gt.png" width="175" height="175" alt="Ground-truth RGB image of Real-world scene 1 at the same target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-gt">Ground truth</span>
+                      </div>
+                      <span class="comparison-divider" aria-hidden="true"><span>‹ ›</span></span>
+                      <input class="comparison-range" type="range" min="0" max="100" value="50" step="1" aria-label="Compare ground truth and ParticleSplat for Real-world scene 1" aria-describedby="comparison-instructions" hidden>
+                    </div>
+                  </div>
+                  <figcaption><span>Scene 1</span></figcaption>
+                </figure>
+                <figure class="comparison-card">
+                  <div class="image-comparison" style="--image-ratio: 175 / 176; --reveal: 50%">
+                    <div class="comparison-stage">
+                      <div class="comparison-layer comparison-reconstruction">
+                        <img src="static/images/reconstruction/real-world-2-reconstruction.png" width="175" height="176" alt="ParticleSplat RGB reconstruction of Real-world scene 2 at the target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-reconstruction">ParticleSplat</span>
+                      </div>
+                      <div class="comparison-layer comparison-gt">
+                        <img src="static/images/reconstruction/real-world-2-gt.png" width="175" height="176" alt="Ground-truth RGB image of Real-world scene 2 at the same target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-gt">Ground truth</span>
+                      </div>
+                      <span class="comparison-divider" aria-hidden="true"><span>‹ ›</span></span>
+                      <input class="comparison-range" type="range" min="0" max="100" value="50" step="1" aria-label="Compare ground truth and ParticleSplat for Real-world scene 2" aria-describedby="comparison-instructions" hidden>
+                    </div>
+                  </div>
+                  <figcaption><span>Scene 2</span></figcaption>
+                </figure>
+                <figure class="comparison-card">
+                  <div class="image-comparison" style="--image-ratio: 175 / 175; --reveal: 50%">
+                    <div class="comparison-stage">
+                      <div class="comparison-layer comparison-reconstruction">
+                        <img src="static/images/reconstruction/real-world-3-reconstruction.png" width="175" height="175" alt="ParticleSplat RGB reconstruction of Real-world scene 3 at the target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-reconstruction">ParticleSplat</span>
+                      </div>
+                      <div class="comparison-layer comparison-gt">
+                        <img src="static/images/reconstruction/real-world-3-gt.png" width="175" height="175" alt="Ground-truth RGB image of Real-world scene 3 at the same target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-gt">Ground truth</span>
+                      </div>
+                      <span class="comparison-divider" aria-hidden="true"><span>‹ ›</span></span>
+                      <input class="comparison-range" type="range" min="0" max="100" value="50" step="1" aria-label="Compare ground truth and ParticleSplat for Real-world scene 3" aria-describedby="comparison-instructions" hidden>
+                    </div>
+                  </div>
+                  <figcaption><span>Scene 3</span></figcaption>
+                </figure>
+                <figure class="comparison-card">
+                  <div class="image-comparison" style="--image-ratio: 175 / 176; --reveal: 50%">
+                    <div class="comparison-stage">
+                      <div class="comparison-layer comparison-reconstruction">
+                        <img src="static/images/reconstruction/real-world-4-reconstruction.png" width="175" height="176" alt="ParticleSplat RGB reconstruction of Real-world scene 4 at the target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-reconstruction">ParticleSplat</span>
+                      </div>
+                      <div class="comparison-layer comparison-gt">
+                        <img src="static/images/reconstruction/real-world-4-gt.png" width="175" height="176" alt="Ground-truth RGB image of Real-world scene 4 at the same target camera view." loading="lazy" decoding="async">
+                        <span class="comparison-label label-gt">Ground truth</span>
+                      </div>
+                      <span class="comparison-divider" aria-hidden="true"><span>‹ ›</span></span>
+                      <input class="comparison-range" type="range" min="0" max="100" value="50" step="1" aria-label="Compare ground truth and ParticleSplat for Real-world scene 4" aria-describedby="comparison-instructions" hidden>
+                    </div>
+                  </div>
+                  <figcaption><span>Scene 4</span></figcaption>
+                </figure>
+              </div>
+            </div>
+            <p class="media-footnote">RGB panels extracted from the paper’s extended qualitative figures, in the original row order. No retouching or new evaluation; the real-world examples use two RGB inputs without depth.</p>
+
+          </section>
+        </section>
+
+        <section class="result-domain" id="policy-results" aria-labelledby="policy-results-title">
+          <header class="domain-heading">
+            <h3 id="policy-results-title">Policy learning</h3>
+            <p>Manipulation success with a frozen ParticleSplat encoder and the EC-Diffuser policy.</p>
+          </header>
+          <section class="result-block" id="policy-quantitative" aria-labelledby="policy-quantitative-title">
+            <h4 id="policy-quantitative-title">Quantitative results</h4>
+            <p class="result-intro">Overall and per-task success rates on RLBench and MimicGen, averaged over three policy seeds.</p>
+        <p class="comparison-note">
+          <strong>Comparing representations.</strong> ParticleSplat, DLP, and VAE-GS share the EC-Diffuser policy on RLBench. On MimicGen, ParticleSplat, DLP, and 3D-DLP share EC-Diffuser. GNFactor, ManiGaussian, and EquiDiff use different policy architectures and are included as external references.
+        </p>
+
+        <div class="chart-legend" aria-label="Chart legend">
+          <span><i class="legend-ours" aria-hidden="true"></i>ParticleSplat (ours)</span>
+          <span><i class="legend-ablation" aria-hidden="true"></i>Ablations (same EC-Diffuser policy network)</span>
+          <span><i class="legend-baseline" aria-hidden="true"></i>Baselines (published methods)</span>
+        </div>
+        <p class="chart-note">Representation ablations appear above baselines, separated by a horizontal line. DLP retains object-centric particles but has no explicit 3D geometry; VAE-GS retains 3D Gaussian splatting but has no object-centric structure. All bars show reported overall success on the same 0–100% scale.</p>
+
+        <article class="benchmark" id="rlbench-single-view" aria-labelledby="rlbench-single-view-title">
+          <div class="benchmark-heading">
+            <h5 id="rlbench-single-view-title">RLBench · single-view</h5>
+            <span>10 tasks · single-view RGB-D</span>
+          </div>
+          <p class="benchmark-protocol">20 demonstrations per task; evaluation on 25 episodes per task per seed. The policy observes the front camera and receives a language instruction.</p>
+          <figure class="success-chart">
+            <figcaption><p class="chart-finding">73.0% overall success · +26.4 points over DLP with the same policy</p></figcaption>
+            <img src="static/charts/rlbench-overall.svg?v=ablations-first-7" width="610" height="435"
+              alt="Single-view RLBench overall success rates on a 0–100% scale. ParticleSplat: 73.0%. Ablations (same EC-Diffuser policy network): DLP (no explicit 3D geometry) 46.6%, VAE-GS (no object-centric structure) 42.0%. Below the horizontal divider, baselines (different policy networks): GNFactor 31.7%, ManiGaussian 45.2%.">
+          </figure>
+          <details class="result-details">
+            <summary>Per-task results <span>10 tasks · mean ± standard deviation</span></summary>
+            <div class="table-scroll" role="region" aria-label="RLBench · single-view" tabindex="0">
+  <table class="task-table">
+    <caption>RLBench · single-view. Success rate (%), mean ± standard deviation over three seeds.</caption>
+    <thead><tr><th scope="col">Task</th><th scope="col">GNFactor</th><th scope="col">ManiGaussian</th><th scope="col">VAE-GS</th><th scope="col">DLP</th><th scope="col" class="ours-col">ParticleSplat</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Push buttons</th><td>18.7 <span class="deviation">± 10.0</span></td><td>20.4 <span class="deviation">± 12.2</span></td><td>22.3 <span class="deviation">± 11.4</span></td><td>36.7 <span class="deviation">± 8.9</span></td><td class="ours-col">57.2 <span class="deviation">± 7.1</span></td></tr>
+      <tr><th scope="row">Meat off grill</th><td>57.3 <span class="deviation">± 18.9</span></td><td>60.2 <span class="deviation">± 18.2</span></td><td>58.8 <span class="deviation">± 7.9</span></td><td>65.4 <span class="deviation">± 4.1</span></td><td class="ours-col">76.0 <span class="deviation">± 8.4</span></td></tr>
+      <tr><th scope="row">Slide block</th><td>20.0 <span class="deviation">± 15.0</span></td><td>24.3 <span class="deviation">± 12.8</span></td><td>25.7 <span class="deviation">± 10.9</span></td><td>54.6 <span class="deviation">± 5.2</span></td><td class="ours-col">92.3 <span class="deviation">± 2.0</span></td></tr>
+      <tr><th scope="row">Drag stick</th><td>37.3 <span class="deviation">± 13.2</span></td><td>92.3 <span class="deviation">± 11.4</span></td><td>90.6 <span class="deviation">± 7.8</span></td><td>93.1 <span class="deviation">± 5.5</span></td><td class="ours-col">96.7 <span class="deviation">± 2.5</span></td></tr>
+      <tr><th scope="row">Sweep to dustpan</th><td>28.0 <span class="deviation">± 15.0</span></td><td>64.5 <span class="deviation">± 13.4</span></td><td>46.9 <span class="deviation">± 8.1</span></td><td>73.5 <span class="deviation">± 7.3</span></td><td class="ours-col">90.6 <span class="deviation">± 6.9</span></td></tr>
+      <tr><th scope="row">Turn tap</th><td>50.7 <span class="deviation">± 8.2</span></td><td>56.2 <span class="deviation">± 6.8</span></td><td>52.5 <span class="deviation">± 6.3</span></td><td>36.2 <span class="deviation">± 5.8</span></td><td class="ours-col">83.8 <span class="deviation">± 4.6</span></td></tr>
+      <tr><th scope="row">Open drawer</th><td>76.0 <span class="deviation">± 5.7</span></td><td>76.3 <span class="deviation">± 6.2</span></td><td>73.1 <span class="deviation">± 5.4</span></td><td>37.8 <span class="deviation">± 9.6</span></td><td class="ours-col">88.4 <span class="deviation">± 4.3</span></td></tr>
+      <tr><th scope="row">Put in drawer</th><td>0.0 <span class="deviation">± 0.0</span></td><td>16.6 <span class="deviation">± 3.2</span></td><td>12.1 <span class="deviation">± 3.0</span></td><td>30.8 <span class="deviation">± 4.7</span></td><td class="ours-col">78.4 <span class="deviation">± 5.8</span></td></tr>
+      <tr><th scope="row">Stack blocks</th><td>4.0 <span class="deviation">± 3.3</span></td><td>12.4 <span class="deviation">± 3.2</span></td><td>8.6 <span class="deviation">± 3.0</span></td><td>11.4 <span class="deviation">± 4.6</span></td><td class="ours-col">19.4 <span class="deviation">± 2.9</span></td></tr>
+      <tr><th scope="row">Close jar</th><td>25.3 <span class="deviation">± 6.8</span></td><td>28.4 <span class="deviation">± 5.4</span></td><td>29.6 <span class="deviation">± 5.0</span></td><td>20.7 <span class="deviation">± 4.9</span></td><td class="ours-col">54.1 <span class="deviation">± 4.7</span></td></tr>
+    </tbody>
+    <tfoot><tr><th scope="row">Overall (reported)</th><td>31.7</td><td>45.2</td><td>42.0</td><td>46.6</td><td class="ours-col">73.0</td></tr></tfoot>
+  </table>
+</div>
+          </details>
+        </article>
+
+        <article class="benchmark" id="rlbench-multi-view" aria-labelledby="rlbench-multi-view-title">
+          <div class="benchmark-heading">
+            <h5 id="rlbench-multi-view-title">RLBench · multi-view</h5>
+            <span>10 tasks · multi-view RGB-D</span>
+          </div>
+          <p class="benchmark-protocol">20 demonstrations per task; evaluation on 25 episodes per task per seed. Policies receive a fixed subset of camera views and a language instruction. All three representations use EC-Diffuser.</p>
+          <figure class="success-chart">
+            <figcaption><p class="chart-finding">83.0% overall success · +23.6 points over DLP with the same policy</p></figcaption>
+            <img src="static/charts/rlbench-multiview.svg?v=ablations-first-7" width="610" height="255"
+              alt="Multi-view RLBench overall success on a 0–100% scale. ParticleSplat: 83.0%. Ablations (same EC-Diffuser policy network): DLP (no explicit 3D geometry) 59.4%, VAE-GS (no object-centric structure) 52.7%.">
+          </figure>
+          <details class="result-details">
+            <summary>Per-task results <span>10 tasks · mean ± standard deviation</span></summary>
+            <div class="table-scroll" role="region" aria-label="RLBench · multi-view" tabindex="0">
+  <table class="task-table">
+    <caption>RLBench · multi-view. Success rate (%), mean ± standard deviation over three seeds.</caption>
+    <thead><tr><th scope="col">Task</th><th scope="col">VAE-GS</th><th scope="col">DLP</th><th scope="col" class="ours-col">ParticleSplat</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Close jar</th><td>34.2 <span class="deviation">± 5.6</span></td><td>41.7 <span class="deviation">± 5.1</span></td><td class="ours-col">82.6 <span class="deviation">± 4.3</span></td></tr>
+      <tr><th scope="row">Open drawer</th><td>79.3 <span class="deviation">± 6.1</span></td><td>63.4 <span class="deviation">± 8.7</span></td><td class="ours-col">91.2 <span class="deviation">± 4.9</span></td></tr>
+      <tr><th scope="row">Sweep to dustpan</th><td>62.8 <span class="deviation">± 7.4</span></td><td>83.6 <span class="deviation">± 6.9</span></td><td class="ours-col">94.1 <span class="deviation">± 6.2</span></td></tr>
+      <tr><th scope="row">Meat off grill</th><td>57.1 <span class="deviation">± 8.6</span></td><td>66.8 <span class="deviation">± 4.5</span></td><td class="ours-col">86.9 <span class="deviation">± 7.6</span></td></tr>
+      <tr><th scope="row">Turn tap</th><td>72.9 <span class="deviation">± 6.8</span></td><td>48.5 <span class="deviation">± 6.2</span></td><td class="ours-col">91.4 <span class="deviation">± 4.2</span></td></tr>
+      <tr><th scope="row">Slide block</th><td>47.9 <span class="deviation">± 11.2</span></td><td>69.3 <span class="deviation">± 5.6</span></td><td class="ours-col">94.2 <span class="deviation">± 2.4</span></td></tr>
+      <tr><th scope="row">Put in drawer</th><td>31.4 <span class="deviation">± 3.6</span></td><td>56.6 <span class="deviation">± 5.1</span></td><td class="ours-col">86.3 <span class="deviation">± 6.1</span></td></tr>
+      <tr><th scope="row">Drag stick</th><td>92.1 <span class="deviation">± 8.4</span></td><td>95.0 <span class="deviation">± 5.0</span></td><td class="ours-col">96.1 <span class="deviation">± 2.9</span></td></tr>
+      <tr><th scope="row">Push buttons</th><td>39.8 <span class="deviation">± 10.7</span></td><td>54.1 <span class="deviation">± 9.3</span></td><td class="ours-col">82.7 <span class="deviation">± 6.6</span></td></tr>
+      <tr><th scope="row">Stack blocks</th><td>9.7 <span class="deviation">± 3.5</span></td><td>15.2 <span class="deviation">± 4.2</span></td><td class="ours-col">24.8 <span class="deviation">± 3.2</span></td></tr>
+    </tbody>
+    <tfoot><tr><th scope="row">Overall (reported)</th><td>52.7</td><td>59.4</td><td class="ours-col">83.0</td></tr></tfoot>
+  </table>
+</div>
+          </details>
+        </article>
+
+        <article class="benchmark" id="mimicgen" aria-labelledby="mimicgen-title">
+          <div class="benchmark-heading">
+            <h5 id="mimicgen-title">MimicGen</h5>
+            <span>12 tasks · two static camera views</span>
+          </div>
+          <p class="benchmark-protocol">200 D0 demonstrations per task; evaluation on 50 rollouts per task per seed. Particle methods share the adapted EC-Diffuser backbone and the same two third-person context cameras.</p>
+          <p class="table-note">DLP, 3D-DLP, and EquiDiff numbers are reproduced in the ParticleSplat manuscript from <a href="https://eubooks3003.github.io/3d-dlp/" target="_blank" rel="noopener noreferrer">3D-DLP</a>.</p>
+          <figure class="success-chart">
+            <figcaption><p class="chart-finding">56.1% overall success · +8.0 points over 3D-DLP with the same policy</p></figcaption>
+            <img src="static/charts/mimicgen-overall.svg?v=ablations-first-7" width="610" height="385"
+              alt="MimicGen overall success rates on a 0–100% scale. ParticleSplat: 56.1%. Ablations (same EC-Diffuser policy network): DLP (no explicit 3D geometry) 34.1%. Below the horizontal divider, baselines: 3D-DLP 48.1% (EC-Diffuser), EquiDiff 47.3% (its own policy network).">
+          </figure>
+          <details class="result-details">
+            <summary>Per-task results <span>12 tasks · mean ± standard deviation</span></summary>
+            <div class="table-scroll" role="region" aria-label="MimicGen · multi-view" tabindex="0">
+  <table class="task-table">
+    <caption>MimicGen · multi-view. Success rate (%), mean ± standard deviation over three seeds.</caption>
+    <thead><tr><th scope="col">Task</th><th scope="col">DLP</th><th scope="col">3D-DLP</th><th scope="col">EquiDiff</th><th scope="col" class="ours-col">ParticleSplat</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">Stack</th><td>78.0 <span class="deviation">± 2.8</span></td><td>94.6 <span class="deviation">± 0.9</span></td><td>82.0 <span class="deviation">± 0.0</span></td><td class="ours-col">92.7 <span class="deviation">± 2.5</span></td></tr>
+      <tr><th scope="row">Stack Three</th><td>14.7 <span class="deviation">± 6.2</span></td><td>70.0 <span class="deviation">± 1.6</span></td><td>12.7 <span class="deviation">± 5.7</span></td><td class="ours-col">68.0 <span class="deviation">± 4.3</span></td></tr>
+      <tr><th scope="row">Square</th><td>45.3 <span class="deviation">± 10.5</span></td><td>51.3 <span class="deviation">± 0.9</span></td><td>50.0 <span class="deviation">± 2.8</span></td><td class="ours-col">58.7 <span class="deviation">± 5.0</span></td></tr>
+      <tr><th scope="row">Threading</th><td>45.3 <span class="deviation">± 6.8</span></td><td>36.0 <span class="deviation">± 1.6</span></td><td>42.0 <span class="deviation">± 0.0</span></td><td class="ours-col">54.0 <span class="deviation">± 4.3</span></td></tr>
+      <tr><th scope="row">Coffee</th><td>82.0 <span class="deviation">± 2.8</span></td><td>36.0 <span class="deviation">± 1.6</span></td><td>70.7 <span class="deviation">± 3.4</span></td><td class="ours-col">89.7 <span class="deviation">± 3.4</span></td></tr>
+      <tr><th scope="row">Three Piece Assembly</th><td>29.3 <span class="deviation">± 7.7</span></td><td>38.0 <span class="deviation">± 4.0</span></td><td>31.3 <span class="deviation">± 3.7</span></td><td class="ours-col">46.7 <span class="deviation">± 4.1</span></td></tr>
+      <tr><th scope="row">Hammer Cleanup</th><td>66.7 <span class="deviation">± 2.5</span></td><td>94.6 <span class="deviation">± 0.9</span></td><td>92.6 <span class="deviation">± 3.3</span></td><td class="ours-col">90.0 <span class="deviation">± 2.8</span></td></tr>
+      <tr><th scope="row">Mug Cleanup</th><td>34.7 <span class="deviation">± 7.5</span></td><td>64.0 <span class="deviation">± 4.3</span></td><td>34.0 <span class="deviation">± 2.8</span></td><td class="ours-col">62.0 <span class="deviation">± 4.9</span></td></tr>
+      <tr><th scope="row">Kitchen</th><td>0.0 <span class="deviation">± 0.0</span></td><td>86.7 <span class="deviation">± 3.4</span></td><td>95.0 <span class="deviation">± 2.5</span></td><td class="ours-col">76.0 <span class="deviation">± 5.7</span></td></tr>
+      <tr><th scope="row">Nut Assembly</th><td>8.7 <span class="deviation">± 2.5</span></td><td>6.0 <span class="deviation">± 1.6</span></td><td>10.7 <span class="deviation">± 2.1</span></td><td class="ours-col">16.0 <span class="deviation">± 3.3</span></td></tr>
+      <tr><th scope="row">Pick Place</th><td>4.7 <span class="deviation">± 2.5</span></td><td>0.0 <span class="deviation">± 0.0</span></td><td>12.7 <span class="deviation">± 2.2</span></td><td class="ours-col">12.7 <span class="deviation">± 3.4</span></td></tr>
+      <tr><th scope="row">Coffee Preparation</th><td>0.0 <span class="deviation">± 0.0</span></td><td>0.0 <span class="deviation">± 0.0</span></td><td>34.0 <span class="deviation">± 4.9</span></td><td class="ours-col">6.7 <span class="deviation">± 2.5</span></td></tr>
+    </tbody>
+    <tfoot><tr><th scope="row">Overall (reported)</th><td>34.1</td><td>48.1</td><td>47.3</td><td class="ours-col">56.1</td></tr></tfoot>
+  </table>
+</div>
+          </details>
+        </article>
+
+
+          </section>
+          <section class="result-block" id="policy-rollouts" aria-labelledby="policy-rollouts-title">
+            <h4 id="policy-rollouts-title">Qualitative results</h4>
+            <p class="result-intro">One successful rollout for each of ten RLBench tasks.</p>
+        <p class="media-reading-note">Each clip pairs the reference trajectory (<strong>GT</strong>, left) with the learned policy (<strong>Pred</strong>, right). These selected successes illustrate behavior; <a href="#policy-quantitative">aggregate success rates</a> provide the quantitative evaluation.</p>
+        <div class="rollout-list">
+          <article class="rollout-task" aria-labelledby="rollout-close-jar-title">
+            <header class="rollout-heading"><h5 id="rollout-close-jar-title">Close jar</h5></header>
+            <div class="rollout-grid">
+            <figure class="video-card">
+              <video controls muted playsinline preload="none" poster="static/videos/policy/close-jar/success-1.jpg" width="256" height="128" aria-label="Close jar — Success 1 (silent video)">
+                <source src="static/videos/policy/close-jar/success-1.mp4" type="video/mp4">
+                <a href="static/videos/policy/close-jar/success-1.mp4">Download Close jar — Success 1 (MP4)</a>
+              </video>
+              <figcaption>
+                <span class="video-label">Successful rollout</span>
+                <span class="media-meta">8.9 s · <a href="static/videos/policy/close-jar/success-1.mp4" download>MP4</a></span>
+              </figcaption>
+            </figure>
+
+            </div>
+          </article>
+          <article class="rollout-task" aria-labelledby="rollout-open-drawer-title">
+            <header class="rollout-heading"><h5 id="rollout-open-drawer-title">Open drawer</h5></header>
+            <div class="rollout-grid">
+            <figure class="video-card">
+              <video controls muted playsinline preload="none" poster="static/videos/policy/open-drawer/success-1.jpg" width="256" height="128" aria-label="Open drawer — Success 1 (silent video)">
+                <source src="static/videos/policy/open-drawer/success-1.mp4" type="video/mp4">
+                <a href="static/videos/policy/open-drawer/success-1.mp4">Download Open drawer — Success 1 (MP4)</a>
+              </video>
+              <figcaption>
+                <span class="video-label">Successful rollout</span>
+                <span class="media-meta">5.1 s · <a href="static/videos/policy/open-drawer/success-1.mp4" download>MP4</a></span>
+              </figcaption>
+            </figure>
+
+            </div>
+          </article>
+          <article class="rollout-task" aria-labelledby="rollout-sweep-to-dustpan-title">
+            <header class="rollout-heading"><h5 id="rollout-sweep-to-dustpan-title">Sweep to dustpan</h5></header>
+            <div class="rollout-grid">
+            <figure class="video-card">
+              <video controls muted playsinline preload="none" poster="static/videos/policy/sweep-to-dustpan/success-1.jpg" width="256" height="128" aria-label="Sweep to dustpan — Success 1 (silent video)">
+                <source src="static/videos/policy/sweep-to-dustpan/success-1.mp4" type="video/mp4">
+                <a href="static/videos/policy/sweep-to-dustpan/success-1.mp4">Download Sweep to dustpan — Success 1 (MP4)</a>
+              </video>
+              <figcaption>
+                <span class="video-label">Successful rollout</span>
+                <span class="media-meta">5.5 s · <a href="static/videos/policy/sweep-to-dustpan/success-1.mp4" download>MP4</a></span>
+              </figcaption>
+            </figure>
+
+            </div>
+          </article>
+          <article class="rollout-task" aria-labelledby="rollout-meat-off-grill-title">
+            <header class="rollout-heading"><h5 id="rollout-meat-off-grill-title">Meat off grill</h5></header>
+            <div class="rollout-grid">
+            <figure class="video-card">
+              <video controls muted playsinline preload="none" poster="static/videos/policy/meat-off-grill/success-1.jpg" width="256" height="128" aria-label="Meat off grill — Success 1 (silent video)">
+                <source src="static/videos/policy/meat-off-grill/success-1.mp4" type="video/mp4">
+                <a href="static/videos/policy/meat-off-grill/success-1.mp4">Download Meat off grill — Success 1 (MP4)</a>
+              </video>
+              <figcaption>
+                <span class="video-label">Successful rollout</span>
+                <span class="media-meta">8.1 s · <a href="static/videos/policy/meat-off-grill/success-1.mp4" download>MP4</a></span>
+              </figcaption>
+            </figure>
+
+            </div>
+          </article>
+          <article class="rollout-task" aria-labelledby="rollout-turn-tap-title">
+            <header class="rollout-heading"><h5 id="rollout-turn-tap-title">Turn tap</h5></header>
+            <div class="rollout-grid">
+            <figure class="video-card">
+              <video controls muted playsinline preload="none" poster="static/videos/policy/turn-tap/success-1.jpg" width="256" height="128" aria-label="Turn tap — Success 1 (silent video)">
+                <source src="static/videos/policy/turn-tap/success-1.mp4" type="video/mp4">
+                <a href="static/videos/policy/turn-tap/success-1.mp4">Download Turn tap — Success 1 (MP4)</a>
+              </video>
+              <figcaption>
+                <span class="video-label">Successful rollout</span>
+                <span class="media-meta">6.2 s · <a href="static/videos/policy/turn-tap/success-1.mp4" download>MP4</a></span>
+              </figcaption>
+            </figure>
+
+            </div>
+          </article>
+          <article class="rollout-task" aria-labelledby="rollout-slide-block-title">
+            <header class="rollout-heading"><h5 id="rollout-slide-block-title">Slide block</h5></header>
+            <div class="rollout-grid">
+            <figure class="video-card">
+              <video controls muted playsinline preload="none" poster="static/videos/policy/slide-block/success-1.jpg" width="256" height="128" aria-label="Slide block — Success 1 (silent video)">
+                <source src="static/videos/policy/slide-block/success-1.mp4" type="video/mp4">
+                <a href="static/videos/policy/slide-block/success-1.mp4">Download Slide block — Success 1 (MP4)</a>
+              </video>
+              <figcaption>
+                <span class="video-label">Successful rollout</span>
+                <span class="media-meta">4.7 s · <a href="static/videos/policy/slide-block/success-1.mp4" download>MP4</a></span>
+              </figcaption>
+            </figure>
+
+            </div>
+          </article>
+          <article class="rollout-task" aria-labelledby="rollout-put-in-drawer-title">
+            <header class="rollout-heading"><h5 id="rollout-put-in-drawer-title">Put in drawer</h5></header>
+            <div class="rollout-grid">
+            <figure class="video-card">
+              <video controls muted playsinline preload="none" poster="static/videos/policy/put-in-drawer/success-1.jpg" width="256" height="128" aria-label="Put in drawer — Success 1 (silent video)">
+                <source src="static/videos/policy/put-in-drawer/success-1.mp4" type="video/mp4">
+                <a href="static/videos/policy/put-in-drawer/success-1.mp4">Download Put in drawer — Success 1 (MP4)</a>
+              </video>
+              <figcaption>
+                <span class="video-label">Successful rollout</span>
+                <span class="media-meta">20.9 s · <a href="static/videos/policy/put-in-drawer/success-1.mp4" download>MP4</a></span>
+              </figcaption>
+            </figure>
+
+            </div>
+          </article>
+          <article class="rollout-task" aria-labelledby="rollout-drag-stick-title">
+            <header class="rollout-heading"><h5 id="rollout-drag-stick-title">Drag stick</h5></header>
+            <div class="rollout-grid">
+            <figure class="video-card">
+              <video controls muted playsinline preload="none" poster="static/videos/policy/drag-stick/success-1.jpg" width="256" height="128" aria-label="Drag stick — Success 1 (silent video)">
+                <source src="static/videos/policy/drag-stick/success-1.mp4" type="video/mp4">
+                <a href="static/videos/policy/drag-stick/success-1.mp4">Download Drag stick — Success 1 (MP4)</a>
+              </video>
+              <figcaption>
+                <span class="video-label">Successful rollout</span>
+                <span class="media-meta">8.2 s · <a href="static/videos/policy/drag-stick/success-1.mp4" download>MP4</a></span>
+              </figcaption>
+            </figure>
+
+            </div>
+          </article>
+          <article class="rollout-task" aria-labelledby="rollout-push-buttons-title">
+            <header class="rollout-heading"><h5 id="rollout-push-buttons-title">Push buttons</h5></header>
+            <div class="rollout-grid">
+            <figure class="video-card">
+              <video controls muted playsinline preload="none" poster="static/videos/policy/push-buttons/success-1.jpg" width="256" height="128" aria-label="Push buttons — Success 1 (silent video)">
+                <source src="static/videos/policy/push-buttons/success-1.mp4" type="video/mp4">
+                <a href="static/videos/policy/push-buttons/success-1.mp4">Download Push buttons — Success 1 (MP4)</a>
+              </video>
+              <figcaption>
+                <span class="video-label">Successful rollout</span>
+                <span class="media-meta">3.8 s · <a href="static/videos/policy/push-buttons/success-1.mp4" download>MP4</a></span>
+              </figcaption>
+            </figure>
+
+            </div>
+          </article>
+          <article class="rollout-task" aria-labelledby="rollout-stack-blocks-title">
+            <header class="rollout-heading"><h5 id="rollout-stack-blocks-title">Stack blocks</h5></header>
+            <div class="rollout-grid">
+            <figure class="video-card">
+              <video controls muted playsinline preload="none" poster="static/videos/policy/stack-blocks/success-1.jpg" width="256" height="128" aria-label="Stack blocks — Success 1 (silent video)">
+                <source src="static/videos/policy/stack-blocks/success-1.mp4" type="video/mp4">
+                <a href="static/videos/policy/stack-blocks/success-1.mp4">Download Stack blocks — Success 1 (MP4)</a>
+              </video>
+              <figcaption>
+                <span class="video-label">Successful rollout</span>
+                <span class="media-meta">20.4 s · <a href="static/videos/policy/stack-blocks/success-1.mp4" download>MP4</a></span>
+              </figcaption>
+            </figure>
+
+            </div>
+          </article>
+        </div>
+        <p class="media-footnote">Clips retain the supplied resolution and playback timing. The supplement does not identify a single-view or multi-view policy setting for these videos, so they are presented separately from those benchmark subsections.</p>
+
+          </section>
+        </section>
+      </div>
+    </section>
+
+    <section class="related-section" aria-labelledby="related-title">
+      <div class="reading-column">
+        <h2 id="related-title">Related work</h2>
+        <p>ParticleSplat builds on the Deep Latent Particles framework and uses EC-Diffuser for downstream control. The implementation and experimental configurations are available in the <a href="https://github.com/lyuxinghe/ParticleSplat" target="_blank" rel="noopener noreferrer">project repository</a>.</p>
+        <ul class="references">
+          <li><a href="https://taldatech.github.io/ddlp-web/" target="_blank" rel="noopener noreferrer">Deep Latent Particles</a><span>Object-centric particle representations</span></li>
+          <li><a href="https://github.com/taldatech/lpwm" target="_blank" rel="noopener noreferrer">Latent Particle World Models</a><span>Particle-based visual modeling</span></li>
+          <li><a href="https://eubooks3003.github.io/3d-dlp/" target="_blank" rel="noopener noreferrer">3D-DLP</a><span>Object-centric 3D representations from voxels</span></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>ParticleSplat</p>
+      <a href="#top">Back to top <span aria-hidden="true">↑</span></a>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "source_archive": "WACV2027___ParticleSplat__Arvix_.zip",
+  "source_member": "main.tex",
+  "source_table": "tab:nvs_results",
+  "notes": "Reported novel-view synthesis metrics, averaged over evaluation views and scenes at 128 x 128. Higher PSNR/SSIM and lower LPIPS are better. No new evaluation was run for this page.",
+  "results": [
+    {"dataset": "RLBench", "input": "1 x RGB-D", "method": "ParticleSplat", "psnr": "25.35", "ssim": "0.7293", "lpips": "0.3563"},
+    {"dataset": "RLBench", "input": "1 x RGB-D", "method": "VAE-GS", "psnr": "21.85", "ssim": "0.6858", "lpips": "0.4838"},
+    {"dataset": "RLBench", "input": "1 x RGB-D", "method": "GNFactor", "psnr": "16.20", "ssim": "0.5273", "lpips": "0.6819"},
+    {"dataset": "RLBench", "input": "1 x RGB-D", "method": "ManiGaussian", "psnr": "15.87", "ssim": "0.5154", "lpips": "0.6793"},
+    {"dataset": "RLBench", "input": "2 x RGB-D", "method": "ParticleSplat", "psnr": "28.77", "ssim": "0.8144", "lpips": "0.2565"},
+    {"dataset": "RLBench", "input": "2 x RGB-D", "method": "VAE-GS", "psnr": "25.93", "ssim": "0.7326", "lpips": "0.3404"},
+    {"dataset": "Real-world", "input": "2 x RGB", "method": "ParticleSplat", "psnr": "24.24", "ssim": "0.8455", "lpips": "0.1153"},
+    {"dataset": "Real-world", "input": "2 x RGB", "method": "VAE-GS", "psnr": "20.33", "ssim": "0.4659", "lpips": "0.6587"}
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "spark/spark.module.js": {
+    "source": "https://sparkjs.dev/releases/spark/2.1.0/spark.module.js",
+    "bytes": 5379614,
+    "sha256": "c0355a962f68a6de9b13df69f05b1aba3614d9aec43a4504975daeb349126a8a"
+  },
+  "spark/LICENSE": {
+    "source": "https://raw.githubusercontent.com/sparkjsdev/spark/v2.1.0/LICENSE",
+    "bytes": 1088,
+    "sha256": "51829693e5dccd9ca1daa093991faac3aaa93238eb8fd5f5cb4130af85791d64"
+  },
+  "three/three.module.min.js": {
+    "source": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.min.js",
+    "bytes": 338908,
+    "sha256": "e2b5ee6bccd38fd6d8a2428546b83c5f2426d84b152ef82be8055556e3b40eb6"
+  },
+  "three/three.core.min.js": {
+    "source": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.core.min.js",
+    "bytes": 381124,
+    "sha256": "61ba0df005b05991361d040d8ff670e1aadfd0ce7aeebd1fdb0725957a8957de"
+  },
+  "three/addons/controls/OrbitControls.js": {
+    "source": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js",
+    "bytes": 38703,
+    "sha256": "b97879c748170baadeb3fb84cea1ffdf4674e283dc06042f34e2acb95a76042c"
+  },
+  "three/addons/controls/TransformControls.js": {
+    "source": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/TransformControls.js",
+    "bytes": 49397,
+    "sha256": "621fb8894c0f748c2be2a6ff8a6bdd72c18a22b24ddfe21d506514544df5c84e"
+  },
+  "three/addons/postprocessing/Pass.js": {
+    "source": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/postprocessing/Pass.js",
+    "bytes": 4218,
+    "sha256": "444b409c235ead986893c472e720da1b779a56985c7d10b279c7944b52bd61c5"
+  },
+  "three/LICENSE": {
+    "source": "https://cdn.jsdelivr.net/npm/three@0.180.0/LICENSE",
+    "bytes": 1081,
+    "sha256": "bfe119ea4fd413f5f7ca3fcd63adb0c4a073ed39daa2fe7d3e6b769e21272601"
+  }
+}
