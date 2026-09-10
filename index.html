@@ -39,10 +39,10 @@
         </a>
       </div>
       <nav class="section-nav" aria-label="On this page">
+        <a href="#manipulation">Interactive demo</a>
         <a href="#abstract">Abstract</a>
         <a href="#architecture">Architecture</a>
         <a href="#decomposition">Scene decomposition</a>
-        <a href="#manipulation">Interactive demo</a>
         <a href="#results">Results</a>
         <a href="#reconstruction">3D reconstruction</a>
         <a href="#policy-results">Policy learning</a>
@@ -51,6 +51,68 @@
   </header>
 
   <main id="main">
+    <section class="content-section" id="manipulation" aria-labelledby="manipulation-title">
+      <div class="container">
+        <header class="section-heading">
+          <h2 id="manipulation-title">A scene you can edit</h2>
+          <p>Pick a point. Make the scene your own.</p>
+        </header>
+        <div class="particle-demo" data-state="idle">
+          <div class="demo-topline">
+            <div><strong>RLBench <span aria-hidden="true">/</span> Close Jar</strong><span class="demo-tag">Interactive 3D</span></div>
+            <span class="demo-engine">Particle-aligned Gaussian splats</span>
+          </div>
+          <div class="demo-workspace">
+            <div class="demo-viewport" id="particle-viewport" aria-label="Interactive reconstructed scene" aria-describedby="demo-instructions">
+              <img class="demo-poster" src="static/scenes/close-jar/poster.png?v=8" width="128" height="128" loading="lazy" alt="Interactive scene preview: two jars and a separate lid beneath a robot arm.">
+              <div class="demo-start">
+                <p>A little room to experiment.</p>
+                <button type="button" id="demo-load" hidden>Explore in 3D <span aria-hidden="true">↗</span></button>
+                <span class="demo-load-note">Loads ~10 MB once. Everything runs in your browser.</span>
+                <noscript><p>Enable JavaScript and WebGL2 to manipulate the scene. A static preview is shown above.</p></noscript>
+              </div>
+              <div class="demo-canvas-caption" hidden><span class="demo-live-dot" aria-hidden="true"></span> Live reconstruction</div>
+              <div class="demo-handles" id="demo-handles" role="group" aria-label="Editable scene regions"></div>
+              <div class="demo-axis-labels" id="demo-axis-labels" aria-hidden="true" hidden><span data-axis="x">X</span><span data-axis="y">Y</span><span data-axis="z">Z</span></div>
+            </div>
+            <div class="demo-view-tools" hidden>
+              <button type="button" id="demo-camera" title="Restore the original camera">Reset view</button>
+              <button type="button" id="demo-reset-all">Reset scene</button>
+              <button type="button" id="demo-show-handles" aria-pressed="true">Handles</button>
+            </div>
+            <form class="demo-controls" id="demo-editor" aria-labelledby="demo-editor-title" hidden onsubmit="return false">
+              <div class="demo-editor-heading"><h3 id="demo-editor-title">Edit selection</h3><button type="button" id="demo-close" aria-label="Close editing panel">×</button></div>
+              <fieldset id="demo-control-fields" disabled>
+                <legend class="demo-sr-only">Position and size</legend>
+                <div class="demo-transform-modes" role="group" aria-label="3D axis controls">
+                  <button type="button" id="demo-move-mode" aria-pressed="true">Move</button>
+                  <button type="button" id="demo-scale-mode" aria-pressed="false">Scale</button>
+                </div>
+                <p class="demo-axis-hint" id="demo-axis-hint">Drag an arrow to move along X, Y or Z.</p>
+                <div class="demo-slider-heading"><span id="demo-axis-heading">Position offset</span><span id="demo-axis-unit">cm</span></div>
+                <div class="demo-position">
+                  <label data-axis="x">X<input type="number" id="demo-x" min="-25" max="25" step="0.1" value="0" aria-label="X offset in centimeters"></label>
+                  <label data-axis="y">Y<input type="number" id="demo-y" min="-25" max="25" step="0.1" value="0" aria-label="Y offset in centimeters"></label>
+                  <label data-axis="z">Z<input type="number" id="demo-z" min="-25" max="25" step="0.1" value="0" aria-label="Z offset in centimeters"></label>
+                </div>
+                <div class="demo-slider-heading"><label for="demo-scale">Uniform scale</label><output id="demo-scale-value" for="demo-scale">1.00×</output></div>
+                <input id="demo-scale" type="range" min="0.5" max="2" step="0.01" value="1" aria-label="Uniform scale of selection">
+                <div class="demo-toggle-row"><button type="button" id="demo-focus">Focus here</button></div>
+                <div class="demo-reset-row"><button type="button" id="demo-reset-selected">Reset selection</button><span>Esc to close</span></div>
+              </fieldset>
+            </form>
+          </div>
+          <div class="demo-bottomline" id="demo-instructions">
+            <span><strong>Click a ball</strong> to edit · <strong>Drag it</strong> to move</span>
+            <span>Drag background to orbit · Right-drag to pan · Scroll / pinch to zoom</span>
+          </div>
+          <p class="demo-status" id="demo-status" role="status" aria-live="polite">Ready to explore.</p>
+        </div>
+        <p class="demo-method-note">Translucent markers select editable regions. Move and scale the reconstruction, then explore a camera range extending slightly beyond the two input views. Rotation and tilt are limited because unseen surfaces may be incomplete; edits do not simulate robot kinematics or physics.</p>
+        <p class="demo-provenance">An interactive illustration based on a held-out RLBench scene and a two-view, 50k-step checkpoint. The initial camera is an unseen intermediate view; native model resolution is 128 × 128. This prepared demo is separate from the benchmark results below.</p>
+      </div>
+    </section>
+
     <section class="abstract-section" id="abstract" aria-labelledby="abstract-title">
       <div class="reading-column">
         <h2 id="abstract-title">Abstract</h2>
@@ -296,68 +358,6 @@
           </div>
           <p class="media-footnote">42.8 s per clip · Same scene and camera sweep across all eight views. Overlapping particles are filtered with non-maximum suppression for visual clarity, as described in the supplement.</p>
         </article>
-      </div>
-    </section>
-
-    <section class="content-section" id="manipulation" aria-labelledby="manipulation-title">
-      <div class="container">
-        <header class="section-heading">
-          <h2 id="manipulation-title">A scene you can edit</h2>
-          <p>Pick a point. Make the scene your own.</p>
-        </header>
-        <div class="particle-demo" data-state="idle">
-          <div class="demo-topline">
-            <div><strong>RLBench <span aria-hidden="true">/</span> Close Jar</strong><span class="demo-tag">Interactive 3D</span></div>
-            <span class="demo-engine">Particle-aligned Gaussian splats</span>
-          </div>
-          <div class="demo-workspace">
-            <div class="demo-viewport" id="particle-viewport" aria-label="Interactive reconstructed scene" aria-describedby="demo-instructions">
-              <img class="demo-poster" src="static/scenes/close-jar/poster.png?v=8" width="128" height="128" loading="lazy" alt="Interactive scene preview: two jars and a separate lid beneath a robot arm.">
-              <div class="demo-start">
-                <p>A little room to experiment.</p>
-                <button type="button" id="demo-load" hidden>Explore in 3D <span aria-hidden="true">↗</span></button>
-                <span class="demo-load-note">Loads ~10 MB once. Everything runs in your browser.</span>
-                <noscript><p>Enable JavaScript and WebGL2 to manipulate the scene. A static preview is shown above.</p></noscript>
-              </div>
-              <div class="demo-canvas-caption" hidden><span class="demo-live-dot" aria-hidden="true"></span> Live reconstruction</div>
-              <div class="demo-handles" id="demo-handles" role="group" aria-label="Editable scene regions"></div>
-              <div class="demo-axis-labels" id="demo-axis-labels" aria-hidden="true" hidden><span data-axis="x">X</span><span data-axis="y">Y</span><span data-axis="z">Z</span></div>
-            </div>
-            <div class="demo-view-tools" hidden>
-              <button type="button" id="demo-camera" title="Restore the original camera">Reset view</button>
-              <button type="button" id="demo-reset-all">Reset scene</button>
-              <button type="button" id="demo-show-handles" aria-pressed="true">Handles</button>
-            </div>
-            <form class="demo-controls" id="demo-editor" aria-labelledby="demo-editor-title" hidden onsubmit="return false">
-              <div class="demo-editor-heading"><h3 id="demo-editor-title">Edit selection</h3><button type="button" id="demo-close" aria-label="Close editing panel">×</button></div>
-              <fieldset id="demo-control-fields" disabled>
-                <legend class="demo-sr-only">Position and size</legend>
-                <div class="demo-transform-modes" role="group" aria-label="3D axis controls">
-                  <button type="button" id="demo-move-mode" aria-pressed="true">Move</button>
-                  <button type="button" id="demo-scale-mode" aria-pressed="false">Scale</button>
-                </div>
-                <p class="demo-axis-hint" id="demo-axis-hint">Drag an arrow to move along X, Y or Z.</p>
-                <div class="demo-slider-heading"><span id="demo-axis-heading">Position offset</span><span id="demo-axis-unit">cm</span></div>
-                <div class="demo-position">
-                  <label data-axis="x">X<input type="number" id="demo-x" min="-25" max="25" step="0.1" value="0" aria-label="X offset in centimeters"></label>
-                  <label data-axis="y">Y<input type="number" id="demo-y" min="-25" max="25" step="0.1" value="0" aria-label="Y offset in centimeters"></label>
-                  <label data-axis="z">Z<input type="number" id="demo-z" min="-25" max="25" step="0.1" value="0" aria-label="Z offset in centimeters"></label>
-                </div>
-                <div class="demo-slider-heading"><label for="demo-scale">Uniform scale</label><output id="demo-scale-value" for="demo-scale">1.00×</output></div>
-                <input id="demo-scale" type="range" min="0.5" max="2" step="0.01" value="1" aria-label="Uniform scale of selection">
-                <div class="demo-toggle-row"><button type="button" id="demo-focus">Focus here</button></div>
-                <div class="demo-reset-row"><button type="button" id="demo-reset-selected">Reset selection</button><span>Esc to close</span></div>
-              </fieldset>
-            </form>
-          </div>
-          <div class="demo-bottomline" id="demo-instructions">
-            <span><strong>Click a ball</strong> to edit · <strong>Drag it</strong> to move</span>
-            <span>Drag background to orbit · Right-drag to pan · Scroll / pinch to zoom</span>
-          </div>
-          <p class="demo-status" id="demo-status" role="status" aria-live="polite">Ready to explore.</p>
-        </div>
-        <p class="demo-method-note">Translucent markers select editable regions. Move and scale the reconstruction, then explore a camera range extending slightly beyond the two input views. Rotation and tilt are limited because unseen surfaces may be incomplete; edits do not simulate robot kinematics or physics.</p>
-        <p class="demo-provenance">An interactive illustration based on a held-out RLBench scene and a two-view, 50k-step checkpoint. The initial camera is an unseen intermediate view; native model resolution is 128 × 128. This prepared demo is separate from the benchmark results below.</p>
       </div>
     </section>
 

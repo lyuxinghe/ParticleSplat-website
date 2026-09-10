@@ -148,9 +148,12 @@ figcaption a { display: block; width: fit-content; font-size: .82rem; margin-top
 .result-block > h4 { font-size: 1.16rem; letter-spacing: -.01em; }
 .result-intro { margin: 12px 0 24px; color: var(--muted); font-size: .9rem; }
 .reconstruction-table { min-width: 510px; }
-.reconstruction-table .metric-setting th { background: #f7f5fc; color: var(--accent-dark); padding-top: 17px; border-bottom: 1px solid #d6cdeb; font-size: .85rem; }
-.metric-setting span { margin-left: 16px; font-size: .78rem; color: var(--muted); font-weight: 400; }
-.reconstruction-table .metric-ours > * { color: var(--accent-dark); font-weight: 650; background: #faf8ff; }
+/* dataset bands: the same solid accent band names the dataset in every results table */
+.reconstruction-table .metric-setting th { background: var(--accent); color: #fff; padding: 11px 14px; border-bottom: none; border-top: 12px solid #fff; font-size: .86rem; font-weight: 600; letter-spacing: .01em; }
+.reconstruction-table tbody:first-of-type .metric-setting th { border-top: none; }
+.metric-setting span { margin-left: 16px; font-size: .78rem; color: #dcd5f2; font-weight: 400; }
+.task-table caption { background: var(--accent); color: #fff; padding: 10px 14px; font-size: .86rem; font-weight: 600; letter-spacing: .01em; }
+.reconstruction-table .metric-ours > * { color: var(--accent-dark); font-weight: 650; background: var(--highlight); }
 .method-difference { color: var(--muted); font-size: .75rem; font-weight: 400; }
 .reconstruction-table .metric-baseline > * { border-top: 1px solid #aaa7b7; }
 .comparison-dataset { margin-top: 28px; }
