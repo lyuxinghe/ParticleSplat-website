@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="439.2pt" height="277.2pt" viewBox="0 0 439.2 277.2" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <title>MimicGen multi-view: overall policy success rates</title>
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:title>MimicGen multi-view: overall policy success rates</dc:title>
+    <dc:description>Reported ParticleSplat manuscript aggregates. Purple: ParticleSplat; light lavender: representation ablations, shown above muted-purple baselines. DLP has no explicit 3D geometry; VAE-GS has no object-centric structure. Group headings explain the policy networks. All bars use a 0–100% scale.</dc:description>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.8.4, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 277.2 
+L 439.2 277.2 
+L 439.2 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 149.328 230.076 
+L 417.24 230.076 
+L 417.24 11.088 
+L 149.328 11.088 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 152.275032 19.461071 
+L 414.292968 19.461071 
+Q 417.24 19.461071 417.24 23.003524 
+L 417.24 37.817418 
+Q 417.24 41.359871 414.292968 41.359871 
+L 152.275032 41.359871 
+Q 149.328 41.359871 149.328 37.817418 
+L 149.328 23.003524 
+Q 149.328 19.461071 152.275032 19.461071 
+z
+" clip-path="url(#p9b3c3ed8fc)" style="fill: #f0eef6"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 152.275032 19.461071 
+L 296.6796 19.461071 
+Q 299.626632 19.461071 299.626632 23.003524 
+L 299.626632 37.817418 
+Q 299.626632 41.359871 296.6796 41.359871 
+L 152.275032 41.359871 
+Q 149.328 41.359871 149.328 37.817418 
+L 149.328 23.003524 
+Q 149.328 19.461071 152.275032 19.461071 
+z
+" clip-path="url(#p9b3c3ed8fc)" style="fill: #5943a0"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 152.275032 80.648894 
+L 414.292968 80.648894 
+Q 417.24 80.648894 417.24 84.191347 
+L 417.24 99.005241 
+Q 417.24 102.547694 414.292968 102.547694 
+L 152.275032 102.547694 
+Q 149.328 102.547694 149.328 99.005241 
+L 149.328 84.191347 
+Q 149.328 80.648894 152.275032 80.648894 
+z
+" clip-path="url(#p9b3c3ed8fc)" style="fill: #f0eef6"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 152.275032 80.648894 
+L 237.73896 80.648894 
+Q 240.685992 80.648894 240.685992 84.191347 
+L 240.685992 99.005241 
+Q 240.685992 102.547694 237.73896 102.547694 
+L 152.275032 102.547694 
+Q 149.328 102.547694 149.328 99.005241 
+L 149.328 84.191347 
+Q 149.328 80.648894 152.275032 80.648894 
+z
+" clip-path="url(#p9b3c3ed8fc)" style="fill: #c7bedb"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 152.275032 154.718365 
+L 414.292968 154.718365 
+Q 417.24 154.718365 417.24 158.260818 
+L 417.24 173.074712 
+Q 417.24 176.617165 414.292968 176.617165 
+L 152.275032 176.617165 
+Q 149.328 176.617165 149.328 173.074712 
+L 149.328 158.260818 
+Q 149.328 154.718365 152.275032 154.718365 
+z
+" clip-path="url(#p9b3c3ed8fc)" style="fill: #f0eef6"/>
+   </g>
+   <g id="patch_8">
+    <path d="M 152.275032 154.718365 
+L 275.24664 154.718365 
+Q 278.193672 154.718365 278.193672 158.260818 
+L 278.193672 173.074712 
+Q 278.193672 176.617165 275.24664 176.617165 
+L 152.275032 176.617165 
+Q 149.328 176.617165 149.328 173.074712 
+L 149.328 158.260818 
+Q 149.328 154.718365 152.275032 154.718365 
+z
+" clip-path="url(#p9b3c3ed8fc)" style="fill: #78668f"/>
+   </g>
+   <g id="patch_9">
+    <path d="M 152.275032 186.922482 
+L 414.292968 186.922482 
+Q 417.24 186.922482 417.24 190.464935 
+L 417.24 205.278829 
+Q 417.24 208.821282 414.292968 208.821282 
+L 152.275032 208.821282 
+Q 149.328 208.821282 149.328 205.278829 
+L 149.328 190.464935 
+Q 149.328 186.922482 152.275032 186.922482 
+z
+" clip-path="url(#p9b3c3ed8fc)" style="fill: #f0eef6"/>
+   </g>
+   <g id="patch_10">
+    <path d="M 152.275032 186.922482 
+L 273.103344 186.922482 
+Q 276.050376 186.922482 276.050376 190.464935 
+L 276.050376 205.278829 
+Q 276.050376 208.821282 273.103344 208.821282 
+L 152.275032 208.821282 
+Q 149.328 208.821282 149.328 205.278829 
+L 149.328 190.464935 
+Q 149.328 186.922482 152.275032 186.922482 
+z
+" clip-path="url(#p9b3c3ed8fc)" style="fill: #78668f"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <defs>
+       <path id="mca10a35164" d="M 0 0 
+L 0 3 
+" style="stroke: #626572; stroke-width: 0.8"/>
+      </defs>
+      <g>
+       <use xlink:href="#mca10a35164" x="149.328" y="230.076" style="fill: #626572; stroke: #626572; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="fill: #626572; font: 11.5px 'DejaVu Sans'; text-anchor: middle" x="149.328" y="247.814203" transform="rotate(-0 149.328 247.814203)">0</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_2">
+      <g>
+       <use xlink:href="#mca10a35164" x="216.306" y="230.076" style="fill: #626572; stroke: #626572; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="fill: #626572; font: 11.5px 'DejaVu Sans'; text-anchor: middle" x="216.306" y="247.814203" transform="rotate(-0 216.306 247.814203)">25</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_3">
+      <g>
+       <use xlink:href="#mca10a35164" x="283.284" y="230.076" style="fill: #626572; stroke: #626572; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="fill: #626572; font: 11.5px 'DejaVu Sans'; text-anchor: middle" x="283.284" y="247.814203" transform="rotate(-0 283.284 247.814203)">50</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#mca10a35164" x="350.262" y="230.076" style="fill: #626572; stroke: #626572; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="fill: #626572; font: 11.5px 'DejaVu Sans'; text-anchor: middle" x="350.262" y="247.814203" transform="rotate(-0 350.262 247.814203)">75</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_5">
+      <g>
+       <use xlink:href="#mca10a35164" x="417.24" y="230.076" style="fill: #626572; stroke: #626572; stroke-width: 0.8"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="fill: #626572; font: 11.5px 'DejaVu Sans'; text-anchor: middle" x="417.24" y="247.814203" transform="rotate(-0 417.24 247.814203)">100</text>
+     </g>
+    </g>
+    <g id="text_6">
+     <text style="fill: #626572; font: 12.5px 'DejaVu Sans'; text-anchor: middle" x="283.284" y="268.703891" transform="rotate(-0 283.284 268.703891)">Overall success rate (%)</text>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2"/>
+   <g id="line2d_6">
+    <path d="M 10.01376 118.327712 
+L 417.24 118.327712 
+" style="fill: none; stroke: #c7bfda; stroke-linecap: square"/>
+   </g>
+   <g id="patch_11">
+    <path d="M 149.328 230.076 
+L 417.24 230.076 
+" style="fill: none; stroke: #dedee7; stroke-width: 0.8; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="text_7">
+    <text style="fill: #252633; font: 700 15px 'DejaVu Sans'; text-anchor: end" x="135.9324" y="34.549533" transform="rotate(-0 135.9324 34.549533)">ParticleSplat</text>
+   </g>
+   <g id="text_8">
+    <text style="fill: #ffffff; font: 700 13.5px 'DejaVu Sans'; text-anchor: end" x="293.732568" y="34.135627" transform="rotate(-0 293.732568 34.135627)">56.1%</text>
+   </g>
+   <g id="text_9">
+    <text style="fill: #626572; font: 12.5px 'DejaVu Sans'; text-anchor: start" x="10.01376" y="68.640136" transform="rotate(-0 10.01376 68.640136)">Ablations (same EC-Diffuser policy network)</text>
+   </g>
+   <g id="text_10">
+    <text style="fill: #252633; font: 15px 'DejaVu Sans'; text-anchor: end" x="135.9324" y="90.584698" transform="rotate(-0 135.9324 90.584698)">DLP</text>
+   </g>
+   <g id="text_11">
+    <text style="fill: #626572; font: 9.5px 'DejaVu Sans'; text-anchor: end" x="135.9324" y="104.525018" transform="rotate(-0 135.9324 104.525018)">(no explicit 3D geometry)</text>
+   </g>
+   <g id="text_12">
+    <text style="fill: #252633; font: 700 13.5px 'DejaVu Sans'; text-anchor: end" x="234.791928" y="95.32345" transform="rotate(-0 234.791928 95.32345)">34.1%</text>
+   </g>
+   <g id="text_13">
+    <text style="fill: #626572; font: 12.5px 'DejaVu Sans'; text-anchor: start" x="10.01376" y="143.353689" transform="rotate(-0 10.01376 143.353689)">Baselines (3D-DLP: EC-Diffuser; EquiDiff: own policy)</text>
+   </g>
+   <g id="text_14">
+    <text style="fill: #252633; font: 15px 'DejaVu Sans'; text-anchor: end" x="135.9324" y="169.806827" transform="rotate(-0 135.9324 169.806827)">3D-DLP</text>
+   </g>
+   <g id="text_15">
+    <text style="fill: #ffffff; font: 700 13.5px 'DejaVu Sans'; text-anchor: end" x="272.299608" y="169.392921" transform="rotate(-0 272.299608 169.392921)">48.1%</text>
+   </g>
+   <g id="text_16">
+    <text style="fill: #252633; font: 15px 'DejaVu Sans'; text-anchor: end" x="135.9324" y="202.010945" transform="rotate(-0 135.9324 202.010945)">EquiDiff</text>
+   </g>
+   <g id="text_17">
+    <text style="fill: #ffffff; font: 700 13.5px 'DejaVu Sans'; text-anchor: end" x="270.156312" y="201.597039" transform="rotate(-0 270.156312 201.597039)">47.3%</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="p9b3c3ed8fc">
+   <rect x="149.328" y="11.088" width="267.912" height="218.988"/>
+  </clipPath>
+ </defs>
+</svg>
