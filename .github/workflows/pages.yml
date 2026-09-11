@@ -25,10 +25,10 @@ jobs:
       - name: Validate and assemble the static site
         run: |
           python tools/build_site.py --check
-          python tools/build_site.py --output site
+          python tools/build_site.py --output "$RUNNER_TEMP/site"   # the tool refuses an output inside the source tree
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: site
+          path: ${{ runner.temp }}/site
 
   deploy:
     needs: build
