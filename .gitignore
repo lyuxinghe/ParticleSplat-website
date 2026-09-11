@@ -1,0 +1,16 @@
+# Keep private submission PDFs out of the public project page.
+/static/papers/
+
+# Private inputs and generated diagnostics are never website source assets.
+*.zip
+*.pdf
+*.npz
+*.npy
+*.pth
+*.pt
+*.log
+.env*
+/audit/
+/screenshots/
+/playwright-report/
+/test-results/

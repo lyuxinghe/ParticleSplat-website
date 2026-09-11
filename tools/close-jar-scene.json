@@ -1,0 +1,16 @@
+{
+  "title": "Close Jar",
+  "dataset": "RLBench",
+  "overview_view": 10,
+  "framing": {"center": [0.5, 0.51], "height": 0.9},
+  "groups": [
+    {"id": "region-1", "particles": [8, 26]},
+    {"id": "region-2", "particles": [10, 25]},
+    {"id": "region-3", "particles": [13, 28]},
+    {"id": "region-4", "particles": [1, 6, 20, 24]},
+    {"id": "region-5", "particles": [0, 31]},
+    {"id": "region-6", "particles": [2, 12, 22, 30]},
+    {"id": "region-7", "particles": [4, 9, 21]},
+    {"id": "region-8", "particles": [3, 5, 11, 23, 27, 29]}
+  ]
+}
