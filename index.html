@@ -13,7 +13,7 @@
        The supplied manuscript still contains template author names. -->
   <title>ParticleSplat: Self-supervised Object-centric Latent Particle Splatting</title>
   <link rel="icon" href="static/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=results-17">
+  <link rel="stylesheet" href="styles.css?v=overview-18">
   <script src="static/js/comparison.js?v=results-15" defer></script>
   <link rel="stylesheet" href="static/css/particle-demo.css?v=4">
   <script type="importmap">
@@ -39,6 +39,7 @@
         </a>
       </div>
       <nav class="section-nav" aria-label="On this page">
+        <a href="#overview">Video overview</a>
         <a href="#manipulation">Interactive demo</a>
         <a href="#abstract">Abstract</a>
         <a href="#architecture">Architecture</a>
@@ -51,6 +52,21 @@
   </header>
 
   <main id="main">
+    <section class="overview-section" id="overview" aria-label="Video overview">
+      <div class="container">
+        <figure class="video-card overview-video">
+          <video controls autoplay muted loop playsinline preload="auto" poster="static/videos/overview/poster.jpg" width="1280" height="720" aria-label="ParticleSplat full overview: self-supervised 3D reconstruction, decomposition, latent control, and robotic manipulation (66-second silent video)" aria-describedby="overview-caption">
+            <source src="static/videos/overview/particlesplat-full.mp4" type="video/mp4">
+            <a href="static/videos/overview/particlesplat-full.mp4">Watch the full ParticleSplat video</a>
+          </video>
+          <figcaption id="overview-caption">
+            <span class="video-label">From posed images to editable 3D scenes and robotic manipulation</span>
+            <span class="media-meta">1:06 <span aria-hidden="true">·</span> <a href="static/videos/overview/particlesplat-full.mp4" download aria-label="Download the full ParticleSplat overview video">Download MP4</a></span>
+          </figcaption>
+        </figure>
+      </div>
+    </section>
+
     <section class="content-section" id="manipulation" aria-labelledby="manipulation-title">
       <div class="container">
         <header class="section-heading">
