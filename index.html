@@ -13,7 +13,7 @@
        The supplied manuscript still contains template author names. -->
   <title>ParticleSplat: Self-supervised Object-centric Latent Particle Splatting</title>
   <link rel="icon" href="static/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=overview-18">
+  <link rel="stylesheet" href="styles.css?v=abstract-19">
   <script src="static/js/comparison.js?v=results-15" defer></script>
   <link rel="stylesheet" href="static/css/particle-demo.css?v=4">
   <script type="importmap">
@@ -39,9 +39,9 @@
         </a>
       </div>
       <nav class="section-nav" aria-label="On this page">
+        <a href="#abstract">Abstract</a>
         <a href="#overview">Video overview</a>
         <a href="#manipulation">Interactive demo</a>
-        <a href="#abstract">Abstract</a>
         <a href="#architecture">Architecture</a>
         <a href="#decomposition">Scene decomposition</a>
         <a href="#results">Results</a>
@@ -52,9 +52,10 @@
   </header>
 
   <main id="main">
-    <section class="overview-section" id="overview" aria-label="Video overview">
+    <section class="abstract-section" id="abstract" aria-labelledby="abstract-title">
       <div class="container">
-        <figure class="video-card overview-video">
+        <h2 id="abstract-title">Abstract</h2>
+        <figure class="video-card overview-video" id="overview">
           <video controls autoplay muted loop playsinline preload="auto" poster="static/videos/overview/poster.jpg" width="1280" height="720" aria-label="ParticleSplat full overview: self-supervised 3D reconstruction, decomposition, latent control, and robotic manipulation (66-second silent video)" aria-describedby="overview-caption">
             <source src="static/videos/overview/particlesplat-full.mp4" type="video/mp4">
             <a href="static/videos/overview/particlesplat-full.mp4">Watch the full ParticleSplat video</a>
@@ -64,6 +65,15 @@
             <span class="media-meta">1:06 <span aria-hidden="true">·</span> <a href="static/videos/overview/particlesplat-full.mp4" download aria-label="Download the full ParticleSplat overview video">Download MP4</a></span>
           </figcaption>
         </figure>
+      </div>
+      <div class="reading-column abstract-copy">
+        <p>
+          We present <strong>ParticleSplat</strong>, a self-supervised object-centric representation learning method that decomposes scenes into latent particles through feedforward 3D Gaussian Splatting. Building on Deep Latent Particles (DLP), we extend the particle representation beyond 2D image space to capture the geometric structure needed for robotic manipulation.
+          Our model jointly encodes posed observations into a 3D object-centric latent space, then transforms each particle into an aligned field of 3D Gaussians whose composition reconstructs the scene.
+        </p>
+        <p>
+          Training with a novel view synthesis objective yields object masks without supervision and supports controllable scene editing through particle attributes. Evaluations on simulated and real-world data demonstrate the representation’s reconstruction and decomposition capabilities. On downstream imitation learning, ParticleSplat improves policy success on both RLBench and MimicGen, showing the value of combining object-centric structure with explicit 3D information.
+        </p>
       </div>
     </section>
 
@@ -126,19 +136,6 @@
         </div>
         <p class="demo-method-note">Translucent markers select editable regions. Move and scale the reconstruction, then explore a camera range extending slightly beyond the two input views. Rotation and tilt are limited because unseen surfaces may be incomplete; edits do not simulate robot kinematics or physics.</p>
         <p class="demo-provenance">An interactive illustration based on a held-out RLBench scene and a two-view, 50k-step checkpoint. The initial camera is an unseen intermediate view; native model resolution is 128 × 128. This prepared demo is separate from the benchmark results below.</p>
-      </div>
-    </section>
-
-    <section class="abstract-section" id="abstract" aria-labelledby="abstract-title">
-      <div class="reading-column">
-        <h2 id="abstract-title">Abstract</h2>
-        <p>
-          We present <strong>ParticleSplat</strong>, a self-supervised object-centric representation learning method that decomposes scenes into latent particles through feedforward 3D Gaussian Splatting. Building on Deep Latent Particles (DLP), we extend the particle representation beyond 2D image space to capture the geometric structure needed for robotic manipulation.
-          Our model jointly encodes posed observations into a 3D object-centric latent space, then transforms each particle into an aligned field of 3D Gaussians whose composition reconstructs the scene.
-        </p>
-        <p>
-          Training with a novel view synthesis objective yields object masks without supervision and supports controllable scene editing through particle attributes. Evaluations on simulated and real-world data demonstrate the representation’s reconstruction and decomposition capabilities. On downstream imitation learning, ParticleSplat improves policy success on both RLBench and MimicGen, showing the value of combining object-centric structure with explicit 3D information.
-        </p>
       </div>
     </section>
 

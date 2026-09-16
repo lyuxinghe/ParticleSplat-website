@@ -198,7 +198,7 @@ figcaption a { display: block; width: fit-content; font-size: .82rem; margin-top
 .video-label { color: var(--text); font-size: .8rem; font-weight: 550; line-height: 1.4; }
 .media-meta { white-space: nowrap; color: var(--muted); font-size: .74rem; }
 .video-card .media-meta a { display: inline; margin: 0; font-size: inherit; }
-.overview-section { padding: 24px 0 12px; }
+.abstract-copy { margin-top: 32px; }
 .overview-video video { background: #f7f5fb; border-radius: 10px; box-shadow: 0 12px 40px #30204a0a; }
 .overview-video figcaption { max-width: none; margin-top: 14px; gap: 8px 20px; }
 .overview-video .video-label { font-size: .88rem; font-weight: 400; }
