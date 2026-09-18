@@ -53,10 +53,11 @@ history cleanup or a fresh public repository. Git ignore rules do not remove
 previously committed material.
 
 The public paper is linked in the page header: [arXiv:2609.19463](https://arxiv.org/abs/2609.19463).
-Author and affiliation rows, additional bibliographic metadata, and
-venue/acceptance claims are currently omitted. Use confirmed publication details
-when adding them; do not publish template author names or infer publication
-status from archive filenames.
+The header lists all six authors in paper order with their shared affiliation:
+Robotics Institute, Carnegie Mellon University. Author names link to personal
+research pages where available; Daniel Guo and Elizabeth Terveen use LinkedIn
+because their listed/discovered personal sites were not publicly accessible.
+Additional bibliographic metadata and venue/acceptance claims are omitted.
 
 ## Interactive demo
 
