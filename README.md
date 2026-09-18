@@ -52,10 +52,11 @@ artifact avoids this; publishing the full source requires a separately approved
 history cleanup or a fresh public repository. Git ignore rules do not remove
 previously committed material.
 
-Confirmed authors, affiliations, paper URL and bibliographic metadata have not
-been supplied. These are intentionally omitted, along with venue/acceptance
-claims. Add confirmed values before announcing a paper release; do not publish
-template author names or infer publication status from archive filenames.
+The public paper is linked in the page header: [arXiv:2609.19463](https://arxiv.org/abs/2609.19463).
+Author and affiliation rows, additional bibliographic metadata, and
+venue/acceptance claims are currently omitted. Use confirmed publication details
+when adding them; do not publish template author names or infer publication
+status from archive filenames.
 
 ## Interactive demo
 
